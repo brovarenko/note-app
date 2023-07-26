@@ -41,6 +41,19 @@ function renderNotes() {
     mentionedDatesElement.textContent = note.dates.join(', ');
     noteElement.appendChild(mentionedDatesElement);
     notesContainer.appendChild(noteElement);
+
+    const deleteButton = document.createElement('button');
+    const deleteIcon = document.createElement('i');
+    deleteButton.classList.add('delete-button');
+    deleteIcon.classList.add('fa-solid', 'fa-trash');
+    deleteButton.appendChild(deleteIcon);
+    deleteButton.setAttribute('data-note-id', note.id);
+    noteElement.appendChild(deleteButton);
+  });
+
+  const deleteButtons = document.querySelectorAll('.delete-button');
+  deleteButtons.forEach((button) => {
+    button.addEventListener('click', handleDeleteNote);
   });
 }
 
@@ -66,3 +79,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const addButton = document.querySelector('#addButton');
   addButton.addEventListener('click', handleAddNote);
 });
+
+function handleDeleteNote(event) {
+  const noteId = parseInt(event.target.dataset.noteId);
+  try {
+    const noteIndex = notes.findIndex((note) => note.id === noteId);
+    if (noteIndex !== -1) {
+      notes.splice(noteIndex, 1);
+      renderNotes();
+    }
+  } catch (error) {
+    console.error(error.message);
+  }
+}

@@ -7,6 +7,7 @@ body {
   align-items: center;
   height: 100vh;
 }
+
 .container {
   max-width: 600px;
   width: 100%;
@@ -15,27 +16,38 @@ body {
 
 .header {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   background-color: antiquewhite;
   padding: 10px;
 }
+
 .header-item {
   margin: 10px;
 }
+
+.header-item i {
+  margin: 10px;
+}
+
 .notes-table {
   display: flex;
   flex-direction: column;
 }
+
 .note {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   background-color: rgb(194, 194, 194);
   padding: 10px;
   margin-top: 10px;
+  justify-content: center;
+  align-items: center;
 }
+
 .note div {
   margin: 10px;
 }
+
 .add-button {
   margin: 20px auto;
   padding: 10px 20px;
@@ -55,4 +67,14 @@ body {
 
 .add-button:active {
   background-color: #46a049;
+}
+
+.delete-button {
+  max-width: fit-content;
+  border: none;
+  background-color: rgb(194, 194, 194);
+}
+
+.delete-button:hover {
+  color: #d6d6d6;
 }
