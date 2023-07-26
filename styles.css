@@ -12,6 +12,7 @@ body {
   max-width: 600px;
   width: 100%;
   padding: 20px;
+  background-color: #eeeeee;
 }
 
 .header {
@@ -77,4 +78,24 @@ body {
 
 .delete-button:hover {
   color: #d6d6d6;
+}
+
+.form-container {
+}
+
+.add-form {
+}
+
+.add-form form {
+  display: flex;
+
+  flex-direction: column;
+  max-width: 600px;
+  width: 100%;
+  padding: 20px;
+}
+
+.add-form form * {
+  width: 90%;
+  margin: 5px;
 }
