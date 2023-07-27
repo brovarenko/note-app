@@ -25,6 +25,7 @@ body {
 .header-item {
   margin: 10px;
 }
+
 .header-item-icon {
   margin: 10px;
   justify-self: end;
@@ -42,7 +43,7 @@ body {
 .note {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 2fr 1fr 1fr;
-  background-color: rgb(194, 194, 194);
+  background-color: rgb(204, 204, 204);
   padding: 10px;
   margin-top: 10px;
   justify-content: center;
@@ -56,6 +57,7 @@ body {
 }
 
 .add-button {
+  display: flex;
   margin: 10px 0 0 auto;
   padding: 10px 20px;
   background-color: #50b854;
@@ -64,6 +66,7 @@ body {
   border-radius: 4px;
   cursor: pointer;
 }
+
 .add-button:hover {
   background-color: #47b34c;
 }
@@ -85,14 +88,17 @@ body {
   margin: 2px;
   padding: 2px;
 }
+
 .buttons-group i:hover {
   color: #46a049;
   cursor: pointer;
 }
+
 .form-container {
   display: flex;
   justify-content: center;
 }
+
 .add-form {
   display: flex;
   flex-direction: column;
@@ -107,8 +113,16 @@ body {
   padding: 10px;
 }
 
+.add-form select {
+  padding: 10px;
+}
+
+.add-form label {
+  margin: 5px 0;
+}
+
 .add-form button {
-  margin: 20px auto;
+  margin: 20px 0;
   padding: 10px 20px;
   background-color: #50b854;
   color: #fff;
@@ -159,20 +173,23 @@ body {
   padding: 20px;
   background-color: #eeeeee;
 }
+
 .summary-table {
   display: flex;
   flex-direction: column;
 }
+
 .summary-header {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   background-color: rgb(175, 219, 124);
   padding: 10px;
 }
+
 .summary-row {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  background-color: rgb(194, 194, 194);
+  background-color: rgb(204, 204, 204);
   padding: 10px;
   margin-top: 10px;
   justify-content: center;
