@@ -1,8 +1,15 @@
-const categoryIcons = {
-  Task: 'images/task.png',
-  'Random Thought': 'images/random.png',
-  Idea: 'images/idea.png',
-};
+function getCategoryIconUrl(category) {
+  switch (category) {
+    case 'Task':
+      return 'images/task.png';
+    case 'Random Thought':
+      return 'images/random.png';
+    case 'Idea':
+      return 'images/idea.png';
+    default:
+      return '';
+  }
+}
 
 let editSubmitHandler = null;
 let addSubmitHandler = null;
@@ -42,7 +49,7 @@ function renderNotes() {
     nameElement.textContent = note.name;
     noteElement.appendChild(nameElement);
     const iconElement = document.createElement('img');
-    iconElement.src = categoryIcons[note.category];
+    iconElement.src = getCategoryIconUrl(note.category);
 
     iconElement.classList.add('category-icon');
     nameContainerElement.appendChild(iconElement);
@@ -227,7 +234,7 @@ function showAddNoteForm(type) {
     formElement.reset();
     buttonElement.textContent = 'Add';
   }
-  formElement.removeEventListener('submit', handleEditSubmit);
+
   if (formElement.classList.contains('show')) {
     formElement.classList.remove('show');
     return;
