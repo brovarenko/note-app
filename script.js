@@ -1,3 +1,10 @@
+const categoryIcons = {
+  Task: 'images/task.png',
+  'Random Thought': 'images/random.png',
+  Idea: 'images/idea.png',
+};
+let editSubmitHandler = null;
+let addSubmitHandler = null;
 let notes = [
   {
     id: 1,
@@ -22,44 +29,63 @@ let notes = [
 function renderNotes() {
   const notesContainer = document.querySelector('.notes-table');
   notesContainer.innerHTML = '';
+  const archivedNotesContainer = document.querySelector('.archived-notes');
+  archivedNotesContainer.innerHTML = '';
+
   notes.forEach((note) => {
     const noteElement = document.createElement('div');
     noteElement.classList.add('note');
+    const nameContainerElement = document.createElement('div');
     const nameElement = document.createElement('div');
     nameElement.textContent = note.name;
     noteElement.appendChild(nameElement);
+    const iconElement = document.createElement('img');
+    iconElement.src = categoryIcons[note.category];
+
+    iconElement.classList.add('category-icon');
+    nameContainerElement.appendChild(iconElement);
+    nameContainerElement.appendChild(nameElement);
+    noteElement.appendChild(nameContainerElement);
+
     const createdAtElement = document.createElement('div');
     createdAtElement.textContent = note.createdAt;
     noteElement.appendChild(createdAtElement);
-    const contentElement = document.createElement('div');
-    contentElement.textContent = note.content;
-    noteElement.appendChild(contentElement);
     const categoryElement = document.createElement('div');
     categoryElement.textContent = note.category;
     noteElement.appendChild(categoryElement);
+    const contentElement = document.createElement('div');
+    contentElement.textContent = note.content;
+    noteElement.appendChild(contentElement);
+
     const mentionedDatesElement = document.createElement('div');
     mentionedDatesElement.textContent = note.dates.join(', ');
     noteElement.appendChild(mentionedDatesElement);
-    notesContainer.appendChild(noteElement);
 
+    if (note.archived) {
+      archivedNotesContainer.appendChild(noteElement);
+    } else {
+      notesContainer.appendChild(noteElement);
+    }
     const buttonsElement = document.createElement('div');
     noteElement.appendChild(buttonsElement);
+    buttonsElement.classList.add('buttons-group');
 
-    const deleteButton = document.createElement('button');
-    const deleteIcon = document.createElement('i');
-    deleteButton.classList.add('delete-button');
-    deleteIcon.classList.add('fa-solid', 'fa-trash');
-    deleteButton.appendChild(deleteIcon);
-    deleteButton.setAttribute('data-note-id', note.id);
-    buttonsElement.appendChild(deleteButton);
-
-    const editButton = document.createElement('button');
     const editIcon = document.createElement('i');
-    editButton.classList.add('edit-button');
-    editIcon.classList.add('fa-solid', 'fa-pencil');
-    editButton.appendChild(editIcon);
-    editButton.setAttribute('data-note-id', note.id);
-    buttonsElement.appendChild(editButton);
+    editIcon.classList.add('fa-solid', 'fa-pencil', 'edit-button');
+    editIcon.setAttribute('data-note-id', note.id);
+    buttonsElement.appendChild(editIcon);
+
+    const archiveIcon = document.createElement('i');
+    archiveIcon.classList.add('fa-solid', 'fa-box-archive', 'archive-button');
+    archiveIcon.setAttribute('data-note-id', note.id);
+    buttonsElement.appendChild(archiveIcon);
+
+    const deleteIcon = document.createElement('i');
+    deleteIcon.classList.add('delete-button', 'fa-solid', 'fa-trash');
+    deleteIcon.setAttribute('data-note-id', note.id);
+    buttonsElement.appendChild(deleteIcon);
+
+    archiveIcon.style.color = note.archived ? 'green' : '';
   });
 
   const deleteButtons = document.querySelectorAll('.delete-button');
@@ -71,9 +97,26 @@ function renderNotes() {
   editButtons.forEach((button) => {
     button.addEventListener('click', handleEditNote);
   });
+
+  const archiveButtons = document.querySelectorAll('.archive-button');
+  archiveButtons.forEach((button) => {
+    button.addEventListener('click', handleArchiveNote);
+  });
 }
-let editSubmitHandler = null;
-let addSubmitHandler = null;
+
+function handleArchiveNote(event) {
+  const noteId = parseInt(event.target.dataset.noteId);
+  const note = notes.find((note) => note.id === noteId);
+
+  if (!note) {
+    console.error('Note not found');
+    return;
+  }
+
+  note.archived = !note.archived;
+
+  renderNotes();
+}
 function handleEditNote(event) {
   const noteId = parseInt(event.target.dataset.noteId);
   const note = notes.find((note) => note.id === noteId);
@@ -108,7 +151,6 @@ function handleEditNote(event) {
 
 function handleEditSubmit(event, noteId) {
   event.preventDefault();
-  console.log('handleEditSubmit');
   const form = event.target;
   const formData = new FormData(form);
   const contentDates =
@@ -142,6 +184,8 @@ function handleAddNote() {
 
 document.addEventListener('DOMContentLoaded', () => {
   renderNotes();
+  const archiveToggle = document.querySelector('#archiveToggle');
+  archiveToggle.addEventListener('click', toggleArchivedNotes);
 
   const addButton = document.querySelector('#addButton');
   addButton.addEventListener('click', handleAddNote);
@@ -166,7 +210,6 @@ function showAddNoteForm(type) {
   const formElement = document.querySelector('.add-form');
   if (type === 'edit') {
     buttonElement.textContent = 'Save';
-    console.log('open edit');
   }
   if (type === 'add') {
     if (editSubmitHandler || addSubmitHandler) {
@@ -195,7 +238,7 @@ function formatDate(dateString) {
 
 function handleFormSubmit(event) {
   event.preventDefault();
-  console.log('handleFormSubmit');
+
   const form = event.target;
   const formData = new FormData(form);
   const contentDates =
@@ -219,4 +262,23 @@ function handleFormSubmit(event) {
 
 function handleAddNote() {
   showAddNoteForm('add');
+}
+
+function toggleArchivedNotes() {
+  const activeNotesContainer = document.querySelector('.notes-table');
+  const archivedNotesContainer = document.querySelector('.archived-notes');
+  const archiveToggle = document.querySelector('#archiveToggle');
+  const addButton = document.querySelector('#addButton');
+
+  if (activeNotesContainer.classList.contains('hidden')) {
+    activeNotesContainer.classList.remove('hidden');
+    archivedNotesContainer.classList.add('hidden');
+    archiveToggle.textContent = 'Show Archived Notes';
+    addButton.style.display = 'block';
+  } else {
+    activeNotesContainer.classList.add('hidden');
+    archivedNotesContainer.classList.remove('hidden');
+    archiveToggle.textContent = 'Show Active Notes';
+    addButton.style.display = 'none';
+  }
 }

@@ -9,25 +9,27 @@ body {
 }
 
 .container {
-  max-width: 600px;
-  width: 100%;
+  max-width: 1200px;
+  width: 90%;
   padding: 20px;
   background-color: #eeeeee;
 }
 
 .header {
+  cursor: pointer;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  background-color: rgb(96, 172, 60);
+  grid-template-columns: 1fr 1fr 1fr 2fr 1fr 1fr;
+  background-color: rgb(175, 219, 124);
   padding: 10px;
 }
 
 .header-item {
   margin: 10px;
+  display: flex;
 }
 
 .header-item i {
-  margin: 10px;
+  margin: 5px;
 }
 
 .notes-table {
@@ -37,7 +39,7 @@ body {
 
 .note {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: 1fr 1fr 1fr 2fr 1fr 1fr;
   background-color: rgb(194, 194, 194);
   padding: 10px;
   margin-top: 10px;
@@ -46,7 +48,9 @@ body {
 }
 
 .note div {
-  margin: 10px;
+  margin: 5px;
+  display: flex;
+  overflow: hidden;
 }
 
 .add-button {
@@ -70,22 +74,22 @@ body {
   background-color: #46a049;
 }
 
-.delete-button {
-  border: none;
-}
-.edit-button {
+.buttons-group {
+  display: flex;
 }
 
-.delete-button:hover {
-  color: #d6d6d6;
+.buttons-group i {
+  margin: 2px;
+  padding: 2px;
 }
-
+.buttons-group i:hover {
+  color: #46a049;
+  cursor: pointer;
+}
 .form-container {
+  display: flex;
+  justify-content: center;
 }
-
-.add-form {
-}
-
 .add-form {
   display: flex;
   flex-direction: column;
@@ -93,8 +97,55 @@ body {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.4s ease-in;
+  width: 70%;
+}
+
+.add-form input {
+  padding: 10px;
+}
+
+.add-form button {
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #50b854;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-form button:hover {
+  background-color: #47b34c;
 }
 
 .add-form.show {
   max-height: 500px;
+}
+
+.hidden {
+  display: none;
+}
+
+#archiveToggle {
+  margin: 10px 0;
+  padding: 10px 20px;
+  background-color: #50b854;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#archiveToggle:hover {
+  background-color: #47b34c;
+}
+
+#archiveToggle:active {
+  background-color: #46a049;
+}
+
+.category-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 2px;
 }
