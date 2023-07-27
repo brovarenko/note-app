@@ -3,8 +3,10 @@ const categoryIcons = {
   'Random Thought': 'images/random.png',
   Idea: 'images/idea.png',
 };
+
 let editSubmitHandler = null;
 let addSubmitHandler = null;
+
 let notes = [
   {
     id: 1,
@@ -86,6 +88,7 @@ function renderNotes() {
     buttonsElement.appendChild(deleteIcon);
 
     archiveIcon.style.color = note.archived ? 'green' : '';
+    editIcon.style.display = note.archived ? 'none' : 'flex';
   });
 
   const deleteButtons = document.querySelectorAll('.delete-button');
@@ -114,7 +117,7 @@ function handleArchiveNote(event) {
   }
 
   note.archived = !note.archived;
-
+  renderSummaryTable();
   renderNotes();
 }
 function handleEditNote(event) {
@@ -173,17 +176,19 @@ function handleEditSubmit(event, noteId) {
     showAddNoteForm();
     form.reset();
     renderNotes();
+    renderSummaryTable();
   }
 }
 
 function handleAddNote() {
   notes.push(newNote);
-
   renderNotes();
+  renderSummaryTable();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   renderNotes();
+  renderSummaryTable();
   const archiveToggle = document.querySelector('#archiveToggle');
   archiveToggle.addEventListener('click', toggleArchivedNotes);
 
@@ -199,6 +204,7 @@ function handleDeleteNote(event) {
     if (noteIndex !== -1) {
       notes.splice(noteIndex, 1);
       renderNotes();
+      renderSummaryTable();
     }
   } catch (error) {
     console.error(error.message);
@@ -258,6 +264,7 @@ function handleFormSubmit(event) {
   showAddNoteForm();
   form.reset();
   renderNotes();
+  renderSummaryTable();
 }
 
 function handleAddNote() {
@@ -280,5 +287,41 @@ function toggleArchivedNotes() {
     archivedNotesContainer.classList.remove('hidden');
     archiveToggle.textContent = 'Show Active Notes';
     addButton.style.display = 'none';
+  }
+}
+
+function renderSummaryTable() {
+  const summaryTable = document.querySelector('.summary-table');
+  summaryTable.innerHTML = '';
+
+  const categoryCounts = {
+    Task: { active: 0, archived: 0 },
+    'Random Thought': { active: 0, archived: 0 },
+    Idea: { active: 0, archived: 0 },
+  };
+
+  notes.forEach((note) => {
+    if (!note.archived) {
+      categoryCounts[note.category].active++;
+    } else {
+      categoryCounts[note.category].archived++;
+    }
+  });
+
+  for (const category in categoryCounts) {
+    const row = document.createElement('div');
+    row.classList.add('summary-row');
+    const categoryCell = document.createElement('div');
+    const activeCell = document.createElement('div');
+    const archivedCell = document.createElement('div');
+
+    categoryCell.textContent = category;
+    activeCell.textContent = categoryCounts[category].active;
+    archivedCell.textContent = categoryCounts[category].archived;
+
+    row.appendChild(categoryCell);
+    row.appendChild(activeCell);
+    row.appendChild(archivedCell);
+    summaryTable.appendChild(row);
   }
 }
