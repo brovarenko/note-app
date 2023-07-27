@@ -42,19 +42,96 @@ function renderNotes() {
     noteElement.appendChild(mentionedDatesElement);
     notesContainer.appendChild(noteElement);
 
+    const buttonsElement = document.createElement('div');
+    noteElement.appendChild(buttonsElement);
+
     const deleteButton = document.createElement('button');
     const deleteIcon = document.createElement('i');
     deleteButton.classList.add('delete-button');
     deleteIcon.classList.add('fa-solid', 'fa-trash');
     deleteButton.appendChild(deleteIcon);
     deleteButton.setAttribute('data-note-id', note.id);
-    noteElement.appendChild(deleteButton);
+    buttonsElement.appendChild(deleteButton);
+
+    const editButton = document.createElement('button');
+    const editIcon = document.createElement('i');
+    editButton.classList.add('edit-button');
+    editIcon.classList.add('fa-solid', 'fa-pencil');
+    editButton.appendChild(editIcon);
+    editButton.setAttribute('data-note-id', note.id);
+    buttonsElement.appendChild(editButton);
   });
 
   const deleteButtons = document.querySelectorAll('.delete-button');
   deleteButtons.forEach((button) => {
     button.addEventListener('click', handleDeleteNote);
   });
+
+  const editButtons = document.querySelectorAll('.edit-button');
+  editButtons.forEach((button) => {
+    button.addEventListener('click', handleEditNote);
+  });
+}
+let editSubmitHandler = null;
+let addSubmitHandler = null;
+function handleEditNote(event) {
+  const noteId = parseInt(event.target.dataset.noteId);
+  const note = notes.find((note) => note.id === noteId);
+
+  if (!note) {
+    console.error('Note not found');
+    return;
+  }
+
+  showAddNoteForm('edit');
+
+  const nameInput = document.querySelector('#name');
+  const contentInput = document.querySelector('#content');
+  const categoryInput = document.querySelector('#category');
+
+  nameInput.value = note.name;
+  contentInput.value = note.content;
+  categoryInput.value = note.category;
+
+  const form = document.querySelector('form');
+
+  if (editSubmitHandler || addSubmitHandler) {
+    form.removeEventListener('submit', editSubmitHandler);
+    form.removeEventListener('submit', addSubmitHandler);
+  }
+
+  editSubmitHandler = (event) => {
+    handleEditSubmit(event, noteId);
+  };
+  form.addEventListener('submit', editSubmitHandler);
+}
+
+function handleEditSubmit(event, noteId) {
+  event.preventDefault();
+  console.log('handleEditSubmit');
+  const form = event.target;
+  const formData = new FormData(form);
+  const contentDates =
+    formData.get('content').match(/\b\d{1,2}[\.\/]\d{1,2}[\.\/]\d{4}\b/g) || [];
+
+  const editedNote = {
+    id: noteId,
+    name: formData.get('name'),
+    createdAt: formatDate(new Date().toISOString()),
+    content: formData.get('content'),
+    category: formData.get('category'),
+    dates: contentDates,
+    archived: false,
+  };
+
+  const noteIndex = notes.findIndex((note) => note.id === noteId);
+  console.log(noteIndex);
+  if (noteIndex !== -1) {
+    notes[noteIndex] = editedNote;
+    showAddNoteForm();
+    form.reset();
+    renderNotes();
+  }
 }
 
 function handleAddNote() {
@@ -72,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function handleDeleteNote(event) {
   const noteId = parseInt(event.target.dataset.noteId);
-  console.log(event.target.dataset);
+
   try {
     const noteIndex = notes.findIndex((note) => note.id === noteId);
     if (noteIndex !== -1) {
@@ -84,44 +161,30 @@ function handleDeleteNote(event) {
   }
 }
 
-let formContainer = null;
-
-function showAddNoteForm() {
-  if (formContainer) {
-    formContainer.remove();
-    formContainer = null;
+function showAddNoteForm(type) {
+  const buttonElement = document.querySelector('.submit-btn');
+  const formElement = document.querySelector('.add-form');
+  if (type === 'edit') {
+    buttonElement.textContent = 'Save';
+    console.log('open edit');
+  }
+  if (type === 'add') {
+    if (editSubmitHandler || addSubmitHandler) {
+      formElement.removeEventListener('submit', editSubmitHandler);
+      formElement.removeEventListener('submit', addSubmitHandler);
+    }
+    addSubmitHandler = handleFormSubmit;
+    formElement.addEventListener('submit', addSubmitHandler);
+    formElement.reset();
+    buttonElement.textContent = 'Add';
+  }
+  formElement.removeEventListener('submit', handleEditSubmit);
+  if (formElement.classList.contains('show')) {
+    formElement.classList.remove('show');
     return;
   }
-  formContainer = document.createElement('div');
 
-  formContainer.classList.add('add-form');
-
-  const form = document.createElement('form');
-  form.innerHTML = `
-    <label for="name">Name:</label>
-    <input id="content" name="name" required></input>
-
-    <label for="content">Content:</label>
-    <textarea id="content" name="content" rows="3" required></textarea>
-
-    <label for="category">Category:</label>
-    <select id="category" name="category" required>
-      <option value="Task">Task</option>
-      <option value="Random Thought">Random Thought</option>
-      <option value="Idea">Idea</option>
-    </select>
-
-
-    <button type="submit">Add</button>
-  `;
-
-  form.addEventListener('submit', handleFormSubmit);
-
-  formContainer.appendChild(form);
-
-  const addButton = document.querySelector('#addButton');
-
-  addButton.insertAdjacentElement('afterend', formContainer);
+  formElement.classList.add('show');
 }
 
 function formatDate(dateString) {
@@ -132,7 +195,7 @@ function formatDate(dateString) {
 
 function handleFormSubmit(event) {
   event.preventDefault();
-
+  console.log('handleFormSubmit');
   const form = event.target;
   const formData = new FormData(form);
   const contentDates =
@@ -149,12 +212,11 @@ function handleFormSubmit(event) {
   };
 
   notes.push(newNote);
-
-  form.parentElement.remove();
-  formContainer = null;
+  showAddNoteForm();
+  form.reset();
   renderNotes();
 }
 
 function handleAddNote() {
-  showAddNoteForm();
+  showAddNoteForm('add');
 }

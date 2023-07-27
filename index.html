@@ -22,8 +22,22 @@
         </div>
       </div>
       <div class="notes-table"></div>
+      <button class="add-button" id="addButton">Create Note</button>
       <div class="form-container">
-        <button class="add-button" id="addButton">Create Note</button>
+        <form class="add-form">
+          <label for="name">Name:</label>
+          <input id="name" name="name" required></input>
+          <label for="content">Content:</label>
+          <textarea id="content" name="content" rows="3" required></textarea>
+          <label for="category">Category:</label>
+          <select id="category" name="category" required>
+             <option value="Task">Task</option>
+             <option value="Random Thought">Random Thought</option>
+             <option value="Idea">Idea</option>
+           </select>
+          <button class="submit-btn" type="submit">Add</button>
+        </form>
+        
       </div>
     </div>
 
